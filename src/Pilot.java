@@ -1,4 +1,5 @@
 import java.util.Stack;
+import java.util.Queue;
 import java.util.Random;
 
 class Pilot implements Runnable {
@@ -8,17 +9,30 @@ class Pilot implements Runnable {
         ADULT
     }
 
-    String name;
     Age age;
+
+    int id = 0;
+    static int counter = 0;
 
     Stack<Helmet> availableHelmets;
     Stack<Kart> availableKarts;
 
-    public Pilot(String name, Stack<Helmet> helmets, Stack<Kart> karts) {
-        this.name = name;
+    Queue<Pilot> pickHelmetQueue;
+    Queue<Pilot> pickKartQueue;
+
+    public Pilot(
+            Stack<Helmet> helmets,
+            Stack<Kart> karts,
+            Queue<Pilot> pickHelmetQueue,
+            Queue<Pilot> pickKartQueue) {
+        this.id = counter++;
         this.age = randomAge();
+
         this.availableHelmets = helmets;
         this.availableKarts = karts;
+
+        this.pickHelmetQueue = pickHelmetQueue;
+        this.pickKartQueue = pickKartQueue;
     }
 
     private Age randomAge() {
@@ -46,15 +60,15 @@ class Pilot implements Runnable {
                 pickedHelmet = this.availableHelmets.pop();
                 this.sleep();
                 pickedKart = this.availableKarts.pop();
-                
+
                 break;
-                case TEEN:
+            case TEEN:
                 pickedHelmet = this.availableHelmets.pop();
                 this.sleep();
                 pickedKart = this.availableKarts.pop();
-                
+
                 break;
-                case ADULT:
+            case ADULT:
                 pickedKart = this.availableKarts.pop();
                 this.sleep();
                 pickedHelmet = this.availableHelmets.pop();

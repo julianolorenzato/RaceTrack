@@ -1,5 +1,6 @@
 import java.util.Stack;
 import java.util.Queue;
+import java.util.Random;
 import java.util.LinkedList;
 import java.util.PriorityQueue;
 
@@ -19,11 +20,27 @@ public class RaceTrack {
         Queue<Pilot> pickKartQueue = new LinkedList<Pilot>();
 
         System.out.println("O kartódromo abriu!");
-        for (int i = 0; i < 12; i ++) {
+        for (int i = 0; i < 12; i++) {
             System.out.println("São " + (i + 8) + "h.");
-            
+
+            RaceTrack.sleep();
+
+            // Até 4 pessoas podem chegar a cada hora
+            for (int j = 0; j < new Random().nextInt(4); j++) {
+                Pilot p = new Pilot(availableHelmets, availableKarts, pickHelmetQueue, pickKartQueue);
+            }
+
         }
         System.out.println("O kartódromo fechou!");
+    }
+
+    static private void sleep() {
+        try {
+            // int time = new Random().nextInt(5);
+            Thread.sleep(2000);
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
+        }
     }
 
     static private int pickHelmetQueueComparator(Pilot p1, Pilot p2) {
