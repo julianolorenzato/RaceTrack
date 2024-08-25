@@ -5,6 +5,11 @@ public class RaceTrack {
     private static final Semaphore helmetsSemaphore = new Semaphore(10, true);
     private static final Semaphore kartsSemaphore = new Semaphore(10, true);
 
+    static int servedCustomers = 0;
+    static float totalWaitTime = 0;
+    static int helmetsUsed = 0;
+    static int kartsUsed = 0;
+
     public static void main(String[] args) {
         System.out.println("O kartódromo abriu!");
         int i;
@@ -14,6 +19,7 @@ public class RaceTrack {
             
             // Até 6 pessoas podem chegar a cada hora
             for (int j = 0; j < new Random().nextInt(6); j++) {
+                servedCustomers++;
                 Pilot p = new Pilot();
                 System.out.println(p + " chegou!");
                 
@@ -23,6 +29,10 @@ public class RaceTrack {
             sleep(2);
         }
         System.out.println("---------------> São " + (i + 8) + "h. O kartódromo fechou! <---------------");
+        System.out.println("Clientes atendidos: " + servedCustomers);
+        System.out.println("Tempo médio de espera: " + ((totalWaitTime / 1000) / servedCustomers) + " horas");
+        System.out.println("Capacetes foram usados: " + helmetsUsed + " vezes.");
+        System.out.println("Karts foram usados: " + kartsUsed + " vezes.");
     }
 
     static private void sleep() {
@@ -84,20 +94,34 @@ public class RaceTrack {
         @Override
         public void run() {
             try {
+                long startTime = System.currentTimeMillis();
                 if (this.age == Age.ADULT) {
                     if (kartsSemaphore.availablePermits() == 0) {
                         System.out.println(this + " está aguardando um kart.");
                     }
-                    
                     kartsSemaphore.acquire();
+                    kartsUsed++;
+                    
                     if (helmetsSemaphore.availablePermits() == 0) {
-                        System.out.println(this + " está aguardando um kart.");
+                        System.out.println(this + " está aguardando um capacete.");
                     }
                     helmetsSemaphore.acquire();
+                    helmetsUsed++;
                 } else {
+                    if (helmetsSemaphore.availablePermits() == 0) {
+                        System.out.println(this + " está aguardando um capacete.");
+                    }
                     helmetsSemaphore.acquire();
+                    helmetsUsed++;
+                    
+                    if (kartsSemaphore.availablePermits() == 0) {
+                        System.out.println(this + " está aguardando um kart.");
+                    }
                     kartsSemaphore.acquire();
+                    kartsUsed++;
                 }
+                long endTime = System.currentTimeMillis();
+                totalWaitTime += endTime - startTime;
             } catch (Exception e) {
                 // TODO: handle exception
             } finally {
@@ -110,7 +134,6 @@ public class RaceTrack {
 
                 System.out.println(this + " finalizou a corrida e devolveu os itens.");
             }
-
         }
 
         private Age randomAge() {
