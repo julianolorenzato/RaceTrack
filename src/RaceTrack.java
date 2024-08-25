@@ -26,7 +26,7 @@ public class RaceTrack {
                 new Thread(p).start();
             }
             
-            sleep(2);
+            sleep(1);
         }
         System.out.println("---------------> São " + (i + 8) + "h. O kartódromo fechou! <---------------");
         System.out.println("Clientes atendidos: " + servedCustomers);
